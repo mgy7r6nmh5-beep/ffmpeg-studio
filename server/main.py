@@ -51,13 +51,40 @@ else:
     _bundle = Path(__file__).resolve().parent.parent
     _appdir = _bundle
 
-PROJECT_ROOT  = _appdir   # runtime data (uploads, outputs) lives beside the app
+def _dir_writable(p: Path) -> bool:
+    """目录是否存在且可写（真写一个探测文件，别只看属性）。"""
+    try:
+        p.mkdir(parents=True, exist_ok=True)
+        probe = p / ".write_probe"
+        probe.write_bytes(b"")
+        probe.unlink()
+        return True
+    except Exception:
+        return False
+
+
+def _data_root(appdir: Path) -> Path:
+    """运行时数据（uploads / outputs）放哪。
+
+    优先放程序旁边 —— 便携版数据跟着 exe 走。
+    但安装版装在 Program Files 时那里**不可写**（普通权限双击运行时
+    mkdir/open 会 PermissionError，上传和输出全废），此时回退到
+    %LOCALAPPDATA%\\FFmpegStudio。
+    """
+    if _dir_writable(appdir):
+        return appdir
+    fallback = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "FFmpegStudio"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+PROJECT_ROOT  = _data_root(_appdir)   # runtime data (uploads, outputs)
 FRONTEND_DIR  = _bundle / "frontend"  # static files inside bundle
 UPLOAD_DIR    = PROJECT_ROOT / "uploads"
 OUTPUT_DIR    = PROJECT_ROOT / "outputs"
 
-UPLOAD_DIR.mkdir(exist_ok=True)
-OUTPUT_DIR.mkdir(exist_ok=True)
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # --------------------------------------------------------------------------- #
 # Global state
@@ -791,7 +818,7 @@ async def lifespan(app: FastAPI):
     # nothing to tear down
 
 
-app = FastAPI(title="FFmpeg Studio", version="1.2.0", lifespan=lifespan)
+app = FastAPI(title="FFmpeg Studio", version="1.2.1", lifespan=lifespan)
 
 
 # --------------------------------------------------------------------------- #

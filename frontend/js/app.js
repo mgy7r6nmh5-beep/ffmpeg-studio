@@ -121,7 +121,8 @@ function renderJobs(jobs) {
             }
             ${
               j.status === "completed"
-                ? `<a class="mini-btn" href="${api.downloadUrl(j.id)}" download title="下载"><svg><use href="#ic-download"></use></svg></a>`
+                ? `<button class="mini-btn" data-act="download" title="下载 / 另存为"><svg><use href="#ic-download"></use></svg></button>
+                   <button class="mini-btn" data-act="reveal" title="在文件夹中显示"><svg><use href="#ic-folder"></use></svg></button>`
                 : ""
             }
             <button class="mini-btn" data-act="log" title="日志"><svg><use href="#ic-info"></use></svg></button>
@@ -162,6 +163,10 @@ function renderJobs(jobs) {
         await api.cancel(id);
         toast("info", "已发送取消请求");
       };
+    const dl = card.querySelector('[data-act="download"]');
+    if (dl) dl.onclick = () => downloadJob(id);
+    const rv = card.querySelector('[data-act="reveal"]');
+    if (rv) rv.onclick = () => revealJob(id);
   });
 
   // summary + nav badge
@@ -176,6 +181,44 @@ function renderJobs(jobs) {
     badge.textContent = active;
   } else {
     badge.style.display = "none";
+  }
+}
+
+/** 桌面模式走原生「另存为」；网页模式回退到浏览器下载。
+ *
+ *  为什么不能统一用 <a download>：桌面版里 WebView2 的下载事件 pywebview
+ *  没有接管，点下去是**静默失败**的（实测 Downloads 目录前后无变化）。
+ */
+async function downloadJob(id) {
+  const native = window.pywebview && window.pywebview.api;
+  if (native && native.save_output) {
+    try {
+      const r = await native.save_output(id);
+      if (r && r.ok) toast("success", "已保存到 " + r.path);
+      else if (!r || !r.cancelled) toast("error", (r && r.error) || "保存失败");
+    } catch (e) {
+      toast("error", "保存失败：" + e);
+    }
+    return;
+  }
+  // 网页模式
+  const a = document.createElement("a");
+  a.href = api.downloadUrl(id);
+  a.download = "";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+/** 在资源管理器中定位输出文件（仅桌面模式可用） */
+async function revealJob(id) {
+  const native = window.pywebview && window.pywebview.api;
+  if (!native || !native.reveal_output) return;
+  try {
+    const r = await native.reveal_output(id);
+    if (r && !r.ok) toast("error", r.error || "打开失败");
+  } catch (e) {
+    toast("error", "打开失败：" + e);
   }
 }
 
