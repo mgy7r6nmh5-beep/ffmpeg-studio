@@ -1,0 +1,9 @@
+# FFmpeg Studio — runtime dependencies
+fastapi>=0.110
+uvicorn>=0.27
+aiofiles>=23.2
+pydantic>=2.6
+python-multipart>=0.0.9
+
+# Build-only (install separately):
+#   pip install pyinstaller

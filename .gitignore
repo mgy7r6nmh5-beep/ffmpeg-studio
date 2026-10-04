@@ -1,0 +1,36 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ---- PyInstaller ----
+build/
+dist/
+*.manifest
+
+# ---- Inno Setup ----
+Output/
+*.iss.bak
+
+# ---- Runtime data (created at runtime) ----
+uploads/
+outputs/
+server.log
+*.log
+
+# ---- Test artifacts ----
+tests/_udd*/
+tests/shots/
+tests/*.mp4
+*.tmp
+
+# ---- OS / Editor ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
