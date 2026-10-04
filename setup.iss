@@ -2,7 +2,7 @@
 ; 用 Inno Setup 6+ 编译：ISCC.exe setup.iss
 
 #define MyAppName "FFmpeg Studio"
-#define MyAppVersion "1.2.1"
+#define MyAppVersion "1.2.2"
 #define MyAppPublisher "FFmpeg Studio"
 #define MyAppURL "http://localhost:8787"
 #define MyAppExeName "FFmpegStudio.exe"
@@ -13,6 +13,7 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
+SetupIconFile=assets\app.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2
 SolidCompression=yes

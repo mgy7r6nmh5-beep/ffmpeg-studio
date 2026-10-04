@@ -52,6 +52,7 @@ exe = EXE(
     a.datas,
     [],
     name="FFmpegStudio",
+    icon=str(_HERE / "assets" / "app.ico"),
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
