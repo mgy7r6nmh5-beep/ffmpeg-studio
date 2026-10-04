@@ -13,6 +13,79 @@
     <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
+    <!-- ===== 输出格式建议列表 =====
+         datalist 只是「常用项提示」，输入框本身不限格式：
+         直接手输 ffmpeg 支持的任何容器/扩展名（mxf / mka / avif / y4m / nut …）都能用。 -->
+    <datalist id="fmt-list">
+      <!-- 视频容器 -->
+      <option value="mp4">MP4 视频</option>
+      <option value="mkv">MKV 视频</option>
+      <option value="mov">MOV 视频</option>
+      <option value="webm">WebM 视频</option>
+      <option value="avi">AVI 视频</option>
+      <option value="flv">FLV 视频</option>
+      <option value="wmv">WMV 视频</option>
+      <option value="ts">TS 传输流</option>
+      <option value="m2ts">M2TS 传输流</option>
+      <option value="mpg">MPG 视频</option>
+      <option value="vob">VOB 视频</option>
+      <option value="ogv">OGV 视频</option>
+      <option value="3gp">3GP 视频</option>
+      <option value="m4v">M4V 视频</option>
+      <option value="mxf">MXF 广播格式</option>
+      <option value="nut">NUT 容器</option>
+      <option value="dv">DV 视频</option>
+      <option value="asf">ASF 视频</option>
+      <option value="y4m">Y4M 原始视频</option>
+      <option value="ivf">IVF (AV1/VPx)</option>
+      <option value="wtv">WTV 录像</option>
+      <option value="h264">H.264 裸流</option>
+      <option value="hevc">H.265 裸流</option>
+      <option value="av1">AV1 裸流</option>
+      <option value="rawvideo">rawvideo 原始数据</option>
+      <!-- 音频容器 -->
+      <option value="mp3">MP3 音频</option>
+      <option value="wav">WAV 音频</option>
+      <option value="aac">AAC 音频</option>
+      <option value="flac">FLAC 音频</option>
+      <option value="m4a">M4A 音频</option>
+      <option value="ogg">OGG 音频</option>
+      <option value="opus">Opus 音频</option>
+      <option value="wma">WMA 音频</option>
+      <option value="ac3">AC3 音频</option>
+      <option value="eac3">EAC3 音频</option>
+      <option value="dts">DTS 音频</option>
+      <option value="mka">MKA 音频</option>
+      <option value="amr">AMR 音频</option>
+      <option value="aiff">AIFF 音频</option>
+      <option value="au">AU 音频</option>
+      <option value="ape">APE 音频</option>
+      <option value="tta">TTA 音频</option>
+      <option value="wv">WavPack 音频</option>
+      <option value="caf">CAF 音频</option>
+      <option value="mp2">MP2 音频</option>
+      <option value="w64">W64 音频</option>
+      <!-- 图片 / 动图 -->
+      <option value="gif">GIF 动图</option>
+      <option value="png">PNG 图片</option>
+      <option value="jpg">JPG 图片</option>
+      <option value="webp">WebP 图片</option>
+      <option value="bmp">BMP 图片</option>
+      <option value="tiff">TIFF 图片</option>
+      <option value="avif">AVIF 图片</option>
+      <option value="heic">HEIC 图片</option>
+      <option value="jxl">JPEG XL 图片</option>
+      <option value="ico">ICO 图标</option>
+      <option value="tga">TGA 图片</option>
+      <option value="dpx">DPX 图片</option>
+      <option value="exr">EXR 图片</option>
+      <option value="ppm">PPM 图片</option>
+      <option value="pgm">PGM 图片</option>
+      <!-- 流 / 清单 -->
+      <option value="m3u8">HLS 播放列表</option>
+      <option value="mpd">DASH 清单</option>
+    </datalist>
+
     <!-- ===== Icon sprite ===== -->
     <svg width="0" height="0" style="position: absolute" aria-hidden="true">
       <defs>
@@ -134,19 +207,7 @@
               <div class="grid-3">
                 <div class="field">
                   <label>输出格式</label>
-                  <select id="fmt-convert">
-                    <option value="mp4">MP4 (H.264)</option>
-                    <option value="mkv">MKV</option>
-                    <option value="webm">WebM (VP9)</option>
-                    <option value="mov">MOV</option>
-                    <option value="avi">AVI</option>
-                    <option value="gif">GIF (动图)</option>
-                    <option value="mp3">MP3 (音频)</option>
-                    <option value="wav">WAV (音频)</option>
-                    <option value="aac">AAC (音频)</option>
-                    <option value="flac">FLAC (音频)</option>
-                    <option value="m4a">M4A (音频)</option>
-                  </select>
+                  <input type="text" list="fmt-list" id="fmt-convert" value="mp4" placeholder="任意格式，如 mp4 / mkv / mxf …" />
                 </div>
                 <div class="field">
                   <label>视频编码</label>
@@ -266,6 +327,10 @@
                 <span class="track"></span>
                 <span class="lbl">重新编码（默认流复制，更快且无损）</span>
               </label>
+              <div class="field" style="margin-top:12px">
+                <label>输出格式 <span class="hint">任意格式；留空则跟随源文件</span></label>
+                <input type="text" list="fmt-list" id="fmt-trim" placeholder="mp4 / mkv / m4a …（留空 = 跟随源文件）" />
+              </div>
             </div>
             <div class="card">
               <div class="card-title"><svg><use href="#ic-spark"></use></svg>命令预览</div>
@@ -302,12 +367,7 @@
               <div class="grid-2">
                 <div class="field">
                   <label>输出格式</label>
-                  <select id="fmt-merge">
-                    <option value="mp4">MP4</option>
-                    <option value="mkv">MKV</option>
-                    <option value="mov">MOV</option>
-                    <option value="ts">TS</option>
-                  </select>
+                  <input type="text" list="fmt-list" id="fmt-merge" value="mp4" placeholder="任意格式，如 mp4 / mkv / ts …" />
                 </div>
                 <div class="field">
                   <label>编码方式</label>
@@ -394,6 +454,10 @@
               <div class="field" id="target-wrap" style="margin-top:12px;display:none">
                 <label>目标大小 (MB)</label>
                 <input type="number" id="target-size-compress" placeholder="例如 10" min="1" />
+              </div>
+              <div class="field" style="margin-top:12px">
+                <label>输出格式 <span class="hint">任意格式；留空则跟随源文件</span></label>
+                <input type="text" list="fmt-list" id="fmt-compress" placeholder="mp4 / mkv / m4a …（留空 = 跟随源文件）" />
               </div>
             </div>
             <div class="card">
@@ -547,6 +611,10 @@
                 <div class="field"><label>淡入 (秒)</label><input type="text" id="fade-in" placeholder="0" /></div>
                 <div class="field"><label>淡出 (秒)</label><input type="text" id="fade-out" placeholder="0" /></div>
               </div>
+              <div class="field" style="margin-top:12px">
+                <label>输出格式 <span class="hint">任意格式；留空则跟随源文件</span></label>
+                <input type="text" list="fmt-list" id="fmt-filter" placeholder="mp4 / mkv / webm …（留空 = 跟随源文件）" />
+              </div>
             </div>
 
             <div class="card">
@@ -583,14 +651,7 @@
               <div class="card-title"><svg><use href="#ic-custom"></use></svg>参数</div>
               <div class="field">
                 <label>输出格式</label>
-                <select id="fmt-custom">
-                  <option value="mp4">MP4</option>
-                  <option value="mkv">MKV</option>
-                  <option value="webm">WebM</option>
-                  <option value="mov">MOV</option>
-                  <option value="avi">AVI</option>
-                  <option value="mp3">MP3</option>
-                </select>
+                <input type="text" list="fmt-list" id="fmt-custom" value="mp4" placeholder="任意格式，如 mp4 / mkv / mxf …" />
               </div>
               <div class="field">
                 <label>高级参数 <span class="hint">追加在输入之后、输出之前</span></label>
@@ -633,13 +694,7 @@
               <div class="grid-3">
                 <div class="field">
                   <label>输出格式</label>
-                  <select id="batch-fmt">
-                    <option value="mp4">MP4</option>
-                    <option value="mkv">MKV</option>
-                    <option value="webm">WebM</option>
-                    <option value="mov">MOV</option>
-                    <option value="mp3">MP3</option>
-                  </select>
+                  <input type="text" list="fmt-list" id="batch-fmt" value="mp4" placeholder="任意格式，如 mp4 / mkv / m4a …" />
                 </div>
                 <div class="field">
                   <label>质量 (CRF)</label>

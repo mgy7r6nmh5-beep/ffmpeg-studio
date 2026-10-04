@@ -481,6 +481,11 @@ select {
   padding-right: 34px;
   cursor: pointer;
 }
+/* 带 datalist 的自由输入框：右侧留出浏览器原生下拉指示器的位置，
+   避免长格式名（如 rawvideo）压到箭头上 */
+input[list] {
+  padding-right: 34px;
+}
 /* The open dropdown listbox is rendered by the OS, not the page. Without an
    explicit color, options keep the OS light background while the select's
    light text bleeds through -> invisible options in dark mode. color-scheme

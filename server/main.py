@@ -344,14 +344,26 @@ def write_concat_list(list_path: str, input_paths: List[str]) -> None:
             f.write(f"file '{p}'\n")
 
 
+def _safe_ext(output_format: str) -> str:
+    """Sanitise the output container/extension.
+
+    格式**不做白名单**限制 —— ffmpeg 支持什么就允许用什么（mxf / mka / avif /
+    y4m / nut …）。但必须净化字符集：只保留字母数字，否则
+    ``outputFormat="../../evil"`` 会被直接拼进路径，把文件写出 outputs/ 之外。
+    """
+    ext = re.sub(r"[^A-Za-z0-9]", "", (output_format or "").strip().lstrip("."))
+    return ext or "mp4"
+
+
 def _output_path(output_name: str, output_format: str, job_id: str,
                  default_stem: str) -> str:
     """Compute the output file path under outputs/."""
-    ext = output_format.strip().lstrip(".") or "mp4"
+    ext = _safe_ext(output_format)
     if output_name:
         stem = Path(output_name).stem
     else:
         stem = default_stem or "output"
+    stem = re.sub(r"[^A-Za-z0-9._-]", "_", stem).strip("._") or "output"
     return str(OUTPUT_DIR / f"{stem}_{job_id}.{ext}")
 
 
@@ -779,7 +791,7 @@ async def lifespan(app: FastAPI):
     # nothing to tear down
 
 
-app = FastAPI(title="FFmpeg Studio", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="FFmpeg Studio", version="1.1.0", lifespan=lifespan)
 
 
 # --------------------------------------------------------------------------- #

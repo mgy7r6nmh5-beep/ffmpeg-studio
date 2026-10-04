@@ -142,7 +142,7 @@ function specTrim() {
     mode: "trim",
     inputIds: [state.trim.stored],
     outputName: baseName(state.trim.name),
-    outputFormat: extOf(state.trim.name) || "mp4",
+    outputFormat: val("fmt-trim") || extOf(state.trim.name) || "mp4",
     params: {
       start: val("trim-start") || "0",
       end: val("trim-end"),
@@ -168,7 +168,7 @@ function specCompress() {
     mode: "compress",
     inputIds: [state.compress.stored],
     outputName: baseName(state.compress.name),
-    outputFormat: extOf(state.compress.name) || "mp4",
+    outputFormat: val("fmt-compress") || extOf(state.compress.name) || "mp4",
     params: {
       crf: num("crf-compress"),
       preset: val("preset-compress"),
@@ -193,7 +193,7 @@ function specFilter() {
     mode: "filter",
     inputIds: [state.filter.stored],
     outputName: baseName(state.filter.name),
-    outputFormat: extOf(state.filter.name) || "mp4",
+    outputFormat: val("fmt-filter") || extOf(state.filter.name) || "mp4",
     params: {
       scale,
       rotate: num("rotate-filter"),
@@ -318,6 +318,7 @@ export function initModules() {
   });
   attachDZ(dz("trim"), el("file-trim"), async (files) => {
     state.trim = await uploadOne(files[0]);
+    el("fmt-trim").value = extOf(state.trim.name);
     renderPill("fileinfo-trim", state.trim, () => {
       state.trim = null;
       el("fileinfo-trim").innerHTML = "";
@@ -327,6 +328,7 @@ export function initModules() {
   });
   attachDZ(dz("compress"), el("file-compress"), async (files) => {
     state.compress = await uploadOne(files[0]);
+    el("fmt-compress").value = extOf(state.compress.name);
     renderPill("fileinfo-compress", state.compress, () => {
       state.compress = null;
       el("fileinfo-compress").innerHTML = "";
@@ -336,6 +338,7 @@ export function initModules() {
   });
   attachDZ(dz("filter"), el("file-filter"), async (files) => {
     state.filter = await uploadOne(files[0]);
+    el("fmt-filter").value = extOf(state.filter.name);
     renderPill("fileinfo-filter", state.filter, () => {
       state.filter = null;
       el("fileinfo-filter").innerHTML = "";
