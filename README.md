@@ -1,8 +1,8 @@
 # FFmpeg Studio
 
-音视频处理工作台 —— 跑在本机浏览器里的 FFmpeg 图形前端。上传文件、调参数、看实时进度，不用记命令行。
+音视频处理工作台 —— **一个独立的桌面窗口**（不是网页）。上传文件、调参数、看实时进度，不用记命令行。
 
-后端是一个本地 FastAPI 服务，浏览器打开 `http://127.0.0.1:8787` 即用。**所有处理都在本机完成，文件不出网。**
+双击 `FFmpegStudio.exe` 直接弹出窗口：没有地址栏、没有标签页、没有浏览器 UI（Windows 下用 WebView2 渲染）。窗口背后是一个只绑 `127.0.0.1` 的本地服务，**所有处理都在本机完成，文件不出网**。
 
 ## 功能
 
@@ -24,7 +24,7 @@
 - **命令预览**：参数一改，实时生成等价的 ffmpeg 命令。预览用的命令构造器和实际执行**是同一个函数**（`build_command`），所以看到的命令就是真正会跑的命令。
 - **批量任务队列** + SSE 实时进度与日志
 - 拖拽上传
-- 单文件 exe，免装 Python
+- 单文件桌面 exe：免装 Python、免开浏览器。Win11 自带 WebView2 运行时，无需额外安装
 
 ## 截图
 
@@ -38,8 +38,8 @@
 
 到 [Releases](../../releases) 页面下载：
 
-- `FFmpegStudio.exe` —— 单文件可执行程序，双击即用。可与 `start.bat` 放同一目录，双击 `start.bat` 会自动打开浏览器。
-- `FFmpegStudio_Setup.exe` —— Inno Setup 安装包，安装到 `Program Files`（需要管理员权限）。
+- `FFmpegStudio.exe` —— 单文件桌面程序，**双击直接弹出窗口**，不经过浏览器。
+- `FFmpegStudio_Setup.exe` —— Inno Setup 安装包，安装到 `Program Files`，带开始菜单与桌面快捷方式（需要管理员权限）。
 
 ## ffmpeg 依赖
 
@@ -64,12 +64,17 @@ winget install Gyan.FFmpeg
 
 ```bash
 pip install -r requirements.txt
+
+# 桌面窗口（推荐，和打包版行为一致）
+python desktop.py
+
+# 只跑后端，自己用浏览器打开 http://127.0.0.1:8787
 python server/main.py
 ```
 
-然后打开 <http://127.0.0.1:8787>。
-
 ## 环境变量
+
+只影响 `python server/main.py` 的网页模式。桌面窗口（`desktop.py` / 打包版 exe）会在 `127.0.0.1` 上自动挑一个空闲端口，不使用这两个变量。
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
@@ -84,9 +89,9 @@ python server/main.py
 | `frontend/index.html` | 单页界面 |
 | `frontend/js/` | `api` / `store` / `ui` / `modules` / `app` 五个模块 |
 | `frontend/css/styles.css` | 样式 |
-| `FFmpegStudio.spec` | PyInstaller 打包配置（onefile） |
+| `desktop.py` | 桌面窗口入口（pywebview，打包版用的就是它） |
+| `FFmpegStudio.spec` | PyInstaller 打包配置（onefile，入口 `desktop.py`） |
 | `setup.iss` | Inno Setup 安装脚本 |
-| `start.bat` | 便携版启动脚本（起服务 + 开浏览器） |
 
 ## 自构建
 
@@ -128,6 +133,7 @@ ISCC.exe setup.iss
 - 上传文件与输出保存在程序目录下的 `uploads/`、`outputs/`，不会提交到仓库。
 - 服务无鉴权，默认仅监听本机回环地址，**切勿暴露到公网**。
 - 调用 ffmpeg 一律使用 argv 列表（`subprocess`，不经 shell），自定义参数也经 `shlex.split`，避免命令注入。
+- 桌面窗口不是浏览器：Windows 下由系统自带的 WebView2 渲染，任务栏显示的是本程序自己的图标。
 
 ## 许可
 

@@ -791,7 +791,7 @@ async def lifespan(app: FastAPI):
     # nothing to tear down
 
 
-app = FastAPI(title="FFmpeg Studio", version="1.1.0", lifespan=lifespan)
+app = FastAPI(title="FFmpeg Studio", version="1.2.0", lifespan=lifespan)
 
 
 # --------------------------------------------------------------------------- #

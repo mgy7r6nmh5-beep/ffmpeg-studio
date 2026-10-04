@@ -2,7 +2,7 @@
 ; 用 Inno Setup 6+ 编译：ISCC.exe setup.iss
 
 #define MyAppName "FFmpeg Studio"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.2.0"
 #define MyAppPublisher "FFmpeg Studio"
 #define MyAppURL "http://localhost:8787"
 #define MyAppExeName "FFmpegStudio.exe"

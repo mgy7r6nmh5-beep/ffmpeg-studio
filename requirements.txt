@@ -5,5 +5,8 @@ aiofiles>=23.2
 pydantic>=2.6
 python-multipart>=0.0.9
 
+# 桌面窗口（Windows 下 pywebview 走 WebView2，依赖 pythonnet）
+pywebview>=5.0
+
 # Build-only (install separately):
 #   pip install pyinstaller
